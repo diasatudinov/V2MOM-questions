@@ -1,14 +1,13 @@
 //
-//  VQProjectCellView.swift
+//  VQArchiveCellView.swift
 //  V2MOM questions
 //
-//  Created by Dias Atudinov on 14.01.2026.
 //
 
 
 import SwiftUI
 
-struct VQProjectCellView: View {
+struct VQArchiveCellView: View {
     let project: Project
     @ObservedObject var viewModel: VQProjectViewModel
     @State var status: ProjectStatus = .atWork
@@ -17,6 +16,11 @@ struct VQProjectCellView: View {
             Text(project.title)
                 .font(.system(size: 19, weight: .bold))
                 .foregroundStyle(.white)
+            
+            Text(formatDate(project.date))
+                .font(.system(size: 15, weight: .medium))
+                .foregroundStyle(.white.opacity(0.5))
+            
             HStack(spacing: 16) {
                 Text(project.type.text)
                     .font(.system(size: 16, weight: .semibold))
@@ -25,35 +29,13 @@ struct VQProjectCellView: View {
                     .background(Gradients.blue.color)
                     .clipShape(RoundedRectangle(cornerRadius: 8))
                 
-                
-                Menu {
-                    ForEach(ProjectStatus.allCases) { s in
-                        Button {
-                            viewModel.editStatus(project, newStatus: s)
-                        } label: {
-                            if s == project.status {
-                                Label(s.text, systemImage: "checkmark")
-                            } else {
-                                Text(s.text)
-                            }
-                        }
-                    }
-                    
-                } label: {
-                    HStack(spacing: 8) {
-                        Text(project.status.text)
-                            .font(.system(size: 16, weight: .semibold))
-                        
-                        Image(systemName: "chevron.down")
-                            .resizable()
-                            .scaledToFit()
-                            .frame(height: 7)
-                    }
+                Text(project.status.text)
+                    .font(.system(size: 16, weight: .semibold))
                     .foregroundStyle(.white)
                     .padding(.horizontal, 16).padding(.vertical, 8)
                     .background(statusBg())
                     .clipShape(RoundedRectangle(cornerRadius: 8))
-                }
+                
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -72,8 +54,14 @@ struct VQProjectCellView: View {
             Gradients.red.color
         }
     }
+    
+    private func formatDate(_ date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "dd.MM.yyyy"
+        return formatter.string(from: date)
+    }
 }
 
 #Preview {
-    VQProjectCellView(project: Project(vision: "", values: [], methods: [], obstacles: Obstacles(text: "text", tags: []), measures: "", queastionOneAnswer: .methods, queastionTwoAnswer: .measures, title: "Launch of eco-products ", type: .business, status: .atWork), viewModel: VQProjectViewModel())
+    VQArchiveCellView(project: Project(vision: "", values: [], methods: [], obstacles: Obstacles(text: "text", tags: []), measures: "", queastionOneAnswer: .methods, queastionTwoAnswer: .measures, title: "Launch of eco-products ", type: .business, status: .cancelled), viewModel: VQProjectViewModel())
 }
