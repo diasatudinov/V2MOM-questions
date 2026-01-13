@@ -1,8 +1,7 @@
 //
-//  File.swift
+//  UIApplication + ext.swift
 //  V2MOM questions
 //
-//  Created by Dias Atudinov on 12.01.2026.
 //
 
 
