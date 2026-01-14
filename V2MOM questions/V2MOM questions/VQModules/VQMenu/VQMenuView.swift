@@ -18,7 +18,7 @@ struct VQMenuView: View {
             case 0:
                 VQProjectView(viewModel: viewModel)
             case 1:
-                VQArchiveView(viewModel: viewModel)
+                VQArchivesView(viewModel: viewModel)
             case 2:
                 Color.orange
             default:

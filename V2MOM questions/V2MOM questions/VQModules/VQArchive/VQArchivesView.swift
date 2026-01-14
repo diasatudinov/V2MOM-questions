@@ -1,12 +1,12 @@
 //
-//  VQArchiveView.swift
+//  VQArchivesView.swift
 //  V2MOM questions
 //
 //
 
 import SwiftUI
 
-struct VQArchiveView: View {
+struct VQArchivesView: View {
     @ObservedObject var viewModel: VQProjectViewModel
     var body: some View {
         VStack(alignment: .leading, spacing: 30) {
@@ -32,5 +32,5 @@ struct VQArchiveView: View {
 }
 
 #Preview {
-    VQArchiveView(viewModel: VQProjectViewModel())
+    VQArchivesView(viewModel: VQProjectViewModel())
 }
