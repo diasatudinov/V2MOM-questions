@@ -28,9 +28,8 @@ struct VQProjectView: View {
         .padding(.top, 16).padding(.horizontal, 24)
         .background(.black)
         .overlay(alignment: .bottomTrailing) {
-            NavigationLink {
-                VQQuestionView(viewModel: viewModel, title: "Blog", type: .personal, status: .atWork)
-                    .navigationBarBackButtonHidden()
+            Button {
+                viewModel.openCreateProjectFlow = true
             } label: {
                 HStack(spacing: 8) {
                     Image(systemName: "plus")
@@ -48,6 +47,10 @@ struct VQProjectView: View {
             }.padding(.bottom, 80)
                 .padding(.trailing)
             
+        }
+        .navigationDestination(isPresented: $viewModel.openCreateProjectFlow) {
+            VQNewProjectView(viewModel: viewModel)
+                .navigationBarBackButtonHidden()
         }
     }
 }

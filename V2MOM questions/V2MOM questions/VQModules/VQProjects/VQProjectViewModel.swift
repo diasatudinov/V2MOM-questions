@@ -7,7 +7,7 @@
 import SwiftUI
 
 final class VQProjectViewModel: ObservableObject {
-    
+    @Published var openCreateProjectFlow: Bool = false
     @Published var projects: [Project] = [
 //        Project(vision: "", values: [], methods: [], obstacles: Obstacles(text: "text", tags: []), measures: "", queastionOneAnswer: .methods, queastionTwoAnswer: .measures, title: "Launch of eco-products ", type: .business, status: .atWork),
 //        Project(vision: "", values: [], methods: [], obstacles: Obstacles(text: "text", tags: []), measures: "", queastionOneAnswer: .methods, queastionTwoAnswer: .measures, title: "Launch of eco-products ", type: .business, status: .atWork),
@@ -18,7 +18,7 @@ final class VQProjectViewModel: ObservableObject {
 //        Project(vision: "", values: [], methods: [], obstacles: Obstacles(text: "text", tags: []), measures: "", queastionOneAnswer: .methods, queastionTwoAnswer: .measures, title: "Launch of eco-products ", type: .business, status: .atWork)
     ] {
         didSet {
-            //saveProjects()
+            saveProjects()
         }
     }
     

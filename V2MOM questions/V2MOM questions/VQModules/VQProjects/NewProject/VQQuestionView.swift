@@ -13,11 +13,12 @@ struct VQQuestionView: View {
     let type: ProjectType
     let status: ProjectStatus
     @State private var page: Int = 0
+    @State private var questionNum: Int = 0
     @State private var vision: String = ""
     @State private var value: String = ""
     @State private var values: [Value] = []
     @State private var methods: [Method] = [
-        .init(text: "sdadasd"),
+        .init(text: ""),
         .init(text: ""),
         .init(text: ""),
         .init(text: ""),
@@ -26,6 +27,8 @@ struct VQQuestionView: View {
     @State private var obstacleText: String = ""
     @State private var obstacleTags: [ObstacleTag] = []
     @State private var measures: String = ""
+    @State private var queastionOneAnswer: Answer?
+    @State private var queastionTwoAnswer: Answer?
     
     let columns = Array(repeating: GridItem(.flexible(), spacing: 12), count: 3)
     
@@ -60,6 +63,8 @@ struct VQQuestionView: View {
             Gradients.blue.color
         case 5:
             Gradient(colors: [.black])
+        case 6:
+            Gradient(colors: [.black])
         default:
             Gradients.blue.color
         }
@@ -69,6 +74,8 @@ struct VQQuestionView: View {
         VStack(alignment: .leading, spacing: .zero) {
             if page == 5 {
                 finalPage()
+            } else if page == 6 {
+                surveyPage()
             } else {
                 HStack(spacing: .zero) {
                     Button {
@@ -86,6 +93,7 @@ struct VQQuestionView: View {
                                 .frame(maxWidth: .infinity, alignment: .leading)
                         }
                     }.buttonStyle(.plain)
+                    
                 }.padding(.bottom, 10)
                 
                 Rectangle()
@@ -104,10 +112,18 @@ struct VQQuestionView: View {
                 Button {
                     nextButtonTap()
                 } label: {
-                    Text("AAAAA")
+                    Text("Next")
+                        .font(.system(size: 20, weight: .bold))
+                        .foregroundStyle(arePagesValid() ? btnLabelColor() : .white.opacity(0.5))
+                        .frame(maxWidth: .infinity, alignment: .center)
+                        .padding(.vertical, 13)
+                        .background(arePagesValid() ? .white: .cellBg.opacity(0.2))
+                        .clipShape(RoundedRectangle(cornerRadius: 16))
                 }
+                .buttonStyle(.plain)
                 .frame(maxHeight: .infinity, alignment: .bottom)
                 .padding(.bottom, 60)
+                
             }
             
         }
@@ -120,12 +136,12 @@ struct VQQuestionView: View {
         if page > 0 {
             page -= 1
         } else {
-            dismiss()
+            viewModel.openCreateProjectFlow = false
         }
     }
     
     private func nextButtonTap() {
-        if page < 5 {
+        if page < 5 && arePagesValid() {
             page += 1
         }
     }
@@ -678,7 +694,7 @@ struct VQQuestionView: View {
                 }
                 
                 Button {
-                    
+                    yesPressed()
                 } label: {
                     Text("Yes")
                         .font(.system(size: 24, weight: .bold))
@@ -693,6 +709,161 @@ struct VQQuestionView: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
     }
+    
+    private var questionText: String {
+        switch questionNum {
+        case 0:
+            "Which point was the most understandable?"
+        case 1:
+            "Which point was the most understandable?"
+        default:
+            ""
+        }
+    }
+    
+    private var surveyBtnText: String {
+        switch questionNum {
+        case 0:
+            "Next"
+        case 1:
+            "Save"
+        default:
+            ""
+        }
+    }
+    
+    private func surveyPage() -> some View {
+        VStack(alignment: .leading, spacing: 16) {
+            Text("Survey")
+                .font(.system(size: 20, weight: .bold))
+                .foregroundStyle(.white)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.bottom, 16)
+            
+            VStack(alignment: .leading) {
+                Text(questionText)
+                    .font(.system(size: 19, weight: .bold))
+                    .foregroundStyle(.white)
+                
+                VStack(alignment: .leading, spacing: 8) {
+                    ForEach(Answer.allCases, id: \.self) { answer in
+                        Text(answer.text)
+                            .font(.system(size: 16, weight: .semibold))
+                            .foregroundStyle(.white)
+                            .padding(.vertical, 12).padding(.leading)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .background(isCorrect(answer: answer) ? answerBtnColor(answer: answer) : Gradient(colors: [.textFieldBg]))
+                            .clipShape(RoundedRectangle(cornerRadius: 8))
+                            .onTapGesture {
+                                onAnswerTapped(answer: answer)
+                            }
+
+                    }
+                }
+                
+            }
+            .padding()
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(.newProjectBg)
+            .clipShape(RoundedRectangle(cornerRadius: 16))
+            
+            Button {
+                onSurveyBtnTap()
+            } label: {
+                Text(surveyBtnText)
+                    .font(.system(size: 24, weight: .bold))
+                    .foregroundStyle(isSurveyValid() ? .white : .white.opacity(0.5))
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 13)
+                    .background(isSurveyValid() ? Gradients.yellow.color : Gradient(colors: [.newProjectBg]))
+                    .clipShape(RoundedRectangle(cornerRadius: 16))
+            }
+            .frame(maxHeight: .infinity, alignment: .bottom)
+            .padding(.bottom, 40)
+            
+            
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+    
+    private func onAnswerTapped(answer: Answer) {
+        switch questionNum {
+        case 0:
+            queastionOneAnswer = answer
+        case 1:
+            queastionTwoAnswer = answer
+        default: break
+            
+        }
+    }
+    
+    private func onSurveyBtnTap() {
+        
+        switch questionNum {
+        case 0:
+            if isSurveyValid() {
+                questionNum += 1
+            }
+        case 1:
+            if isSurveyValid() {
+                let project = Project(
+                    vision: vision,
+                    values: values,
+                    methods: methods,
+                    obstacles: Obstacles(text: obstacleText, tags: obstacleTags),
+                    measures: measures,
+                    queastionOneAnswer: queastionOneAnswer ?? .values,
+                    queastionTwoAnswer: queastionOneAnswer ?? .values,
+                    title: title,
+                    type: type,
+                    status: status
+                )
+                
+                viewModel.add(project)
+                viewModel.openCreateProjectFlow = false
+            }
+        default:
+            break
+        }
+    }
+    
+    private func answerBtnColor(answer: Answer) -> Gradient {
+        switch answer {
+        case .vision:
+            Gradients.yellow.color
+        case .values:
+            Gradients.green.color
+        case .obstacles:
+            Gradients.red.color
+        case .methods:
+            Gradients.purple.color
+        case .measures:
+            Gradients.blue.color
+        }
+    }
+    
+    private func isCorrect(answer: Answer) -> Bool {
+        switch questionNum {
+        case 0:
+            queastionOneAnswer == answer
+        case 1:
+            queastionTwoAnswer == answer
+        default:
+            false
+        }
+    }
+    
+    private func isSurveyValid() -> Bool {
+        switch questionNum {
+        case 0:
+            queastionOneAnswer != nil
+        case 1:
+            queastionTwoAnswer != nil
+        default:
+            false
+        }
+    }
+    
     @ViewBuilder private func bodyView() -> some View {
         switch page {
         case 0:
@@ -710,6 +881,43 @@ struct VQQuestionView: View {
             pageOneBody()
         }
     }
+    
+    private func arePagesValid() -> Bool {
+        switch page {
+        case 0:
+            !vision.isEmpty
+        case 1:
+            !values.isEmpty
+        case 2:
+            methods.contains { !$0.text.isEmpty }
+        case 3:
+            !obstacleText.isEmpty
+        case 4:
+            !measures.isEmpty
+            
+        default:
+            false
+        }
+    }
+    
+    private func btnLabelColor() -> Color {
+        switch page {
+        case 0:
+                .btnYellow
+        case 1:
+                .btnGreen
+        case 2:
+                .btnPurple
+        case 3:
+                .btnRed
+        case 4:
+                .btnBlue
+            
+        default:
+                .white
+        }
+    }
+    
     private func deleteValue(_ value: Value) {
         if let index = values.firstIndex(where: { $0.id == value.id }) {
             values.remove(at: index)
@@ -739,7 +947,7 @@ struct VQQuestionView: View {
     }
     
     private func yesPressed() {
-       
+        page += 1
         
     }
     
@@ -758,10 +966,11 @@ struct VQQuestionView: View {
         )
         
         viewModel.add(project)
-        dismiss()
+        viewModel.openCreateProjectFlow = false
     }
 }
 
 #Preview {
     VQQuestionView(viewModel: VQProjectViewModel(), title: "Blog", type: .personal, status: .atWork)
 }
+
