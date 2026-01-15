@@ -54,12 +54,14 @@ enum ObstacleTag: Codable, CaseIterable {
     }
 }
 
-enum Answer: Codable, CaseIterable {
+enum Answer: String, Codable, CaseIterable, Identifiable {
     case vision
     case values
     case methods
     case obstacles
     case measures
+    
+    var id: String { rawValue }
     
     var text: String {
         switch self {

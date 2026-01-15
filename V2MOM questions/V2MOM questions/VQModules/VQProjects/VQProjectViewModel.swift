@@ -55,15 +55,47 @@ final class VQProjectViewModel: ObservableObject {
         guard let index = projects.firstIndex(where: { $0.id == project.id }) else { return }
         projects[index].status = newStatus
     }
-//    func editCheck(project: Project, name: String, type: ChecklistType) {
-//        if let index = checks.firstIndex(where: { $0.id == check.id }) {
-//            checks[index].name = name
-//            checks[index].type = type
-//        }
-//    }
+    
     
     func delete(project: Project) {
         guard let index = projects.firstIndex(where: { $0.id == project.id }) else { return }
         projects.remove(at: index)
+    }
+    
+    func count(for status: ProjectStatus) -> Int {
+        self.projects.filter { $0.status == status }.count
+    }
+
+    func percent(for status: ProjectStatus) -> Double {
+        let total = self.projects.count
+        guard total > 0 else { return 0 }
+        return Double(count(for: status)) / Double(total) * 100
+    }
+    
+    private func mostFrequentAnswerResult(
+        in projects: [Project],
+        keyPath: KeyPath<Project, Answer>
+    ) -> (answer: Answer?, percent: Double) {
+        let total = projects.count
+        guard total > 0 else { return (nil, 0) }
+
+        let counts = Dictionary(grouping: projects, by: { $0[keyPath: keyPath] })
+            .mapValues(\.count)
+
+        guard let (bestAnswer, bestCount) = counts.max(by: { $0.value < $1.value }) else {
+            return (nil, 0)
+        }
+
+        let percent = Double(bestCount) / Double(total) * 100.0
+        let rounded = (percent * 10).rounded() / 10  // 1 знак после запятой
+        return (bestAnswer, rounded)
+    }
+    
+    func mostFrequentQ1Percent() -> (answer: Answer?, percent: Double) {
+        mostFrequentAnswerResult(in: self.projects, keyPath: \.queastionOneAnswer)
+    }
+
+    func mostFrequentQ2Percent() -> (answer: Answer?, percent: Double) {
+        mostFrequentAnswerResult(in: self.projects, keyPath: \.queastionTwoAnswer)
     }
 }

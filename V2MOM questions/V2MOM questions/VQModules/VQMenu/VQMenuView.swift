@@ -20,7 +20,7 @@ struct VQMenuView: View {
             case 1:
                 VQArchivesView(viewModel: viewModel)
             case 2:
-                Color.orange
+                VQStatisticsView(viewModel: viewModel)
             default:
                 Text("default")
             }

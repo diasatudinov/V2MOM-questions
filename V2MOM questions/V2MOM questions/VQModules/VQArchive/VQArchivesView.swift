@@ -17,7 +17,13 @@ struct VQArchivesView: View {
             ScrollView(showsIndicators: false) {
                 VStack(spacing: 24) {
                     ForEach(viewModel.projects.filter({ $0.status != .atWork }), id: \.id) { project in
-                        VQArchiveCellView(project: project, viewModel: viewModel)
+                        NavigationLink {
+                            VQArchiveView(project: project)
+                                .navigationBarBackButtonHidden()
+                        } label: {
+                            VQArchiveCellView(project: project, viewModel: viewModel)
+                        }
+                       
 
                     }
                 }.padding(.bottom, 90)
@@ -32,5 +38,7 @@ struct VQArchivesView: View {
 }
 
 #Preview {
-    VQArchivesView(viewModel: VQProjectViewModel())
+    NavigationStack {
+        VQArchivesView(viewModel: VQProjectViewModel())
+    }
 }
