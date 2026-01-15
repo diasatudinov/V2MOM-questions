@@ -715,7 +715,7 @@ struct VQQuestionView: View {
         case 0:
             "Which point was the most understandable?"
         case 1:
-            "Which point was the most understandable?"
+            "Which point was the most difficult?"
         default:
             ""
         }
@@ -813,7 +813,7 @@ struct VQQuestionView: View {
                     obstacles: Obstacles(text: obstacleText, tags: obstacleTags),
                     measures: measures,
                     queastionOneAnswer: queastionOneAnswer ?? .values,
-                    queastionTwoAnswer: queastionOneAnswer ?? .values,
+                    queastionTwoAnswer: queastionTwoAnswer ?? .values,
                     title: title,
                     type: type,
                     status: status

@@ -1,3 +1,10 @@
+//
+//  DonutChartView.swift
+//  V2MOM questions
+//
+//
+import SwiftUI
+
 struct DonutChartView: View {
     let slices: [StatusSlice]
     let lineWidth: CGFloat = 10

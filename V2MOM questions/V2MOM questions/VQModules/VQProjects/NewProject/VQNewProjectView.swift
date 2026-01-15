@@ -49,112 +49,112 @@ struct VQNewProjectView: View {
                 }.buttonStyle(.plain)
             }.padding(.bottom, 10)
             
-                VStack(spacing: 8) {
+            VStack(spacing: 8) {
+                
+                VStack(spacing: 24) {
+                    VStack(alignment: .leading, spacing: 16) {
+                        Text("Title:")
+                            .font(.system(size: 19, weight: .bold))
+                            .foregroundStyle(.white)
+                        
+                        TextField("", text: $title)
+                            .font(.system(size: 16, weight: .semibold))
+                            .foregroundStyle(.white)
+                            .padding(.vertical, 12).padding(.horizontal, 16)
+                            .background(.textFieldBg)
+                            .clipShape(RoundedRectangle(cornerRadius: 8))
+                            .overlay(alignment: .topLeading) {
+                                if title.isEmpty {
+                                    Text("Text")
+                                        .font(.system(size: 16, weight: .semibold))
+                                        .foregroundStyle(.white.opacity(0.5))
+                                        .allowsHitTesting(false)
+                                        .padding(.vertical, 12).padding(.horizontal, 16)
+                                    
+                                }
+                            }
+                            .overlay {
+                                if !isTitleValid {
+                                    RoundedRectangle(cornerRadius: 8)
+                                        .stroke(lineWidth: 2)
+                                        .foregroundStyle(.red)
+                                }
+                            }
+                    }
                     
-                    VStack(spacing: 24) {
-                        VStack(alignment: .leading, spacing: 16) {
-                            Text("Title:")
-                                .font(.system(size: 19, weight: .bold))
-                                .foregroundStyle(.white)
-                            
-                            TextField("", text: $title)
-                                .font(.system(size: 16, weight: .semibold))
-                                .foregroundStyle(.white)
-                                .padding(.vertical, 12).padding(.horizontal, 16)
-                                .background(.textFieldBg)
-                                .clipShape(RoundedRectangle(cornerRadius: 8))
-                                .overlay(alignment: .topLeading) {
-                                    if title.isEmpty {
-                                        Text("Text")
+                    VStack(alignment: .leading, spacing: 16) {
+                        Text("Type:")
+                            .font(.system(size: 19, weight: .bold))
+                            .foregroundStyle(.white)
+                        
+                        HStack(spacing: 13) {
+                            ForEach(ProjectType.allCases) { type in
+                                Button {
+                                    self.type = type
+                                } label: {
+                                    if type == self.type {
+                                        Text(type.text)
+                                            .font(.system(size: 16, weight: .semibold))
+                                            .foregroundStyle(.white)
+                                            .padding(.vertical, 8).padding(.horizontal, 20)
+                                            .background(Gradients.blue.color)
+                                            .clipShape(RoundedRectangle(cornerRadius: 8))
+                                        
+                                        
+                                    } else {
+                                        Text(type.text)
                                             .font(.system(size: 16, weight: .semibold))
                                             .foregroundStyle(.white.opacity(0.5))
-                                            .allowsHitTesting(false)
-                                            .padding(.vertical, 12).padding(.horizontal, 16)
-                                        
+                                            .padding(.vertical, 8).padding(.horizontal, 16)
                                     }
                                 }
-                                .overlay {
-                                    if !isTitleValid {
-                                        RoundedRectangle(cornerRadius: 8)
-                                            .stroke(lineWidth: 2)
-                                            .foregroundStyle(.red)
-                                    }
-                                }
+                            }
                         }
+                        .padding(8)
+                        .background(.textFieldBg)
+                        .clipShape(RoundedRectangle(cornerRadius: 8))
                         
-                        VStack(alignment: .leading, spacing: 16) {
-                            Text("Type:")
-                                .font(.system(size: 19, weight: .bold))
-                                .foregroundStyle(.white)
-
-                            HStack(spacing: 13) {
-                                ForEach(ProjectType.allCases) { type in
-                                    Button {
-                                        self.type = type
-                                    } label: {
-                                        if type == self.type {
-                                            Text(type.text)
-                                                .font(.system(size: 16, weight: .semibold))
-                                                .foregroundStyle(.white)
-                                                .padding(.vertical, 8).padding(.horizontal, 20)
-                                                .background(Gradients.blue.color)
-                                                .clipShape(RoundedRectangle(cornerRadius: 8))
-                                                
-                                            
-                                        } else {
-                                            Text(type.text)
-                                                .font(.system(size: 16, weight: .semibold))
-                                                .foregroundStyle(.white.opacity(0.5))
-                                                .padding(.vertical, 8).padding(.horizontal, 16)
-                                        }
+                    }.frame(maxWidth: .infinity, alignment: .leading)
+                    
+                    VStack(alignment: .leading, spacing: 16) {
+                        Text("Status:")
+                            .font(.system(size: 19, weight: .bold))
+                            .foregroundStyle(.white)
+                        
+                        HStack(spacing: 13) {
+                            ForEach(ProjectStatus.allCases) { status in
+                                Button {
+                                    self.status = status
+                                } label: {
+                                    if status == self.status {
+                                        Text(status.text)
+                                            .font(.system(size: 16, weight: .semibold))
+                                            .foregroundStyle(.white)
+                                            .padding(.vertical, 8).padding(.horizontal, 20)
+                                            .background(statusColor)
+                                            .clipShape(RoundedRectangle(cornerRadius: 8))
+                                        
+                                        
+                                    } else {
+                                        Text(status.text)
+                                            .font(.system(size: 16, weight: .semibold))
+                                            .foregroundStyle(.white.opacity(0.5))
+                                            .padding(.vertical, 8).padding(.horizontal, 16)
                                     }
                                 }
                             }
-                            .padding(8)
-                            .background(.textFieldBg)
-                            .clipShape(RoundedRectangle(cornerRadius: 8))
-                            
-                        }.frame(maxWidth: .infinity, alignment: .leading)
-                       
-                        VStack(alignment: .leading, spacing: 16) {
-                            Text("Status:")
-                                .font(.system(size: 19, weight: .bold))
-                                .foregroundStyle(.white)
-
-                            HStack(spacing: 13) {
-                                ForEach(ProjectStatus.allCases) { status in
-                                    Button {
-                                        self.status = status
-                                    } label: {
-                                        if status == self.status {
-                                            Text(status.text)
-                                                .font(.system(size: 16, weight: .semibold))
-                                                .foregroundStyle(.white)
-                                                .padding(.vertical, 8).padding(.horizontal, 20)
-                                                .background(statusColor)
-                                                .clipShape(RoundedRectangle(cornerRadius: 8))
-                                                
-                                            
-                                        } else {
-                                            Text(status.text)
-                                                .font(.system(size: 16, weight: .semibold))
-                                                .foregroundStyle(.white.opacity(0.5))
-                                                .padding(.vertical, 8).padding(.horizontal, 16)
-                                        }
-                                    }
-                                }
-                            }
-                            .padding(8)
-                            .background(.textFieldBg)
-                            .clipShape(RoundedRectangle(cornerRadius: 8))
-                            
-                        }.frame(maxWidth: .infinity, alignment: .leading)
+                        }
+                        .padding(8)
+                        .background(.textFieldBg)
+                        .clipShape(RoundedRectangle(cornerRadius: 8))
                         
-                    }
-                    .padding()
-                    .background(.newProjectBg)
-                    .clipShape(RoundedRectangle(cornerRadius: 16))
+                    }.frame(maxWidth: .infinity, alignment: .leading)
+                    
                 }
+                .padding()
+                .background(.newProjectBg)
+                .clipShape(RoundedRectangle(cornerRadius: 16))
+            }
             
              
             Button {
